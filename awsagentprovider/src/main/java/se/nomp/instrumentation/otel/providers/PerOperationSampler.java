@@ -6,7 +6,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.sdk.trace.data.LinkData;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 import io.opentelemetry.sdk.trace.samplers.SamplingResult;
-import se.nomp.instrumentation.otel.providers.config.OperationSamplingStrategy;
+import se.nomp.instrumentation.otel.providers.config.UrlSamplingStrategy;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,12 +21,12 @@ class PerOperationSampler implements Sampler {
     private final Map<String, Sampler> perOperationSampler;
 
     PerOperationSampler(
-            Sampler defaultSampler, List<OperationSamplingStrategy> perOperationSampling) {
+            Sampler defaultSampler, List<UrlSamplingStrategy> perOperationSampling) {
         this.defaultSampler = defaultSampler;
         this.perOperationSampler = new LinkedHashMap<>(perOperationSampling.size());
-        for (OperationSamplingStrategy opSamplingStrategy : perOperationSampling) {
+        for (UrlSamplingStrategy opSamplingStrategy : perOperationSampling) {
             this.perOperationSampler.put(
-                    opSamplingStrategy.getOperation(),
+                    opSamplingStrategy.getUrl(),
                     Sampler.traceIdRatioBased(
                             opSamplingStrategy.getProbabilisticSampling().getSamplingRate()));
         }

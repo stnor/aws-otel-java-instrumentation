@@ -1,11 +1,11 @@
 package se.nomp.instrumentation.otel.providers.config;
 
-public class OperationSamplingStrategy {
-    String operation;
+public class UrlSamplingStrategy {
+    String url;
     ProbabilisticSamplingStrategy probabilisticSampling;
 
-    public String getOperation() {
-        return operation;
+    public String getUrl() {
+        return url;
     }
 
     public ProbabilisticSamplingStrategy getProbabilisticSampling() {

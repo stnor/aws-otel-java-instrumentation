@@ -12,8 +12,7 @@ public class NompSamplerProvider implements ConfigurableSamplerProvider {
      */
     @Override
     public Sampler createSampler(ConfigProperties config) {
-        System.out.println("****** HELLO SAMPLER CREATED ********");
-        return new RateLimitingSampler(1);
+        return new NompParentBasedSampler();
     }
 
     /**

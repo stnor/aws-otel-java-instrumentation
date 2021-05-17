@@ -44,6 +44,8 @@ for (bundled in bundledProjects) {
   evaluationDependsOn(bundled.path)
 }
 
+project.version = "1.1.0-nomp"
+
 tasks {
   processResources {
     for (bundled in bundledProjects) {

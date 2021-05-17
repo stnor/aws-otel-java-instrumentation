@@ -66,18 +66,18 @@ allprojects {
     }
   }
 
-  spotless {
-    kotlinGradle {
-      ktlint("0.40.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
-
-      // Doesn't support pluginManagement block
-      targetExclude("settings.gradle.kts")
-
-      if (!project.path.startsWith(":sample-apps:")) {
-        licenseHeaderFile("${rootProject.projectDir}/config/license/header.java", "plugins|include|import")
-      }
-    }
-  }
+//  spotless {
+//    kotlinGradle {
+//      ktlint("0.40.0").userData(mapOf("indent_size" to "2", "continuation_indent_size" to "2"))
+//
+//      // Doesn't support pluginManagement block
+//      targetExclude("settings.gradle.kts")
+//
+//      if (!project.path.startsWith(":sample-apps:")) {
+//        licenseHeaderFile("${rootProject.projectDir}/config/license/header.java", "plugins|include|import")
+//      }
+//    }
+//  }
 
   plugins.withId("java") {
     java {
@@ -110,15 +110,15 @@ allprojects {
       testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     }
 
-    spotless {
-      java {
-        googleJavaFormat()
-
-        if (!project.path.startsWith(":sample-apps:")) {
-          licenseHeaderFile("${rootProject.projectDir}/config/license/header.java")
-        }
-      }
-    }
+//    spotless {
+//      java {
+//        googleJavaFormat()
+//
+//        if (!project.path.startsWith(":sample-apps:")) {
+//          licenseHeaderFile("${rootProject.projectDir}/config/license/header.java")
+//        }
+//      }
+//    }
 
     val enableCoverage: String? by project
     if (enableCoverage == "true") {

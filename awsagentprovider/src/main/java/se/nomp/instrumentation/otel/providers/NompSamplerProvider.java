@@ -12,7 +12,7 @@ public class NompSamplerProvider implements ConfigurableSamplerProvider {
      */
     @Override
     public Sampler createSampler(ConfigProperties config) {
-        return new NompParentBasedSampler();
+        return Sampler.parentBased(new NompParentBasedSampler());
     }
 
     /**

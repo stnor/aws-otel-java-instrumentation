@@ -61,7 +61,7 @@ dependencies {
   javaagentLibs(project(":instrumentation:logback-1.0"))
 }
 
-project.version = "1.1.0-nomp"
+project.version = "1.1.1-nomp"
 
 tasks {
   val relocateJavaagentLibs by registering(ShadowJar::class) {

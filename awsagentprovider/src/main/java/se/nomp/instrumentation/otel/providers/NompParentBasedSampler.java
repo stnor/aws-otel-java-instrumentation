@@ -33,6 +33,11 @@ public class NompParentBasedSampler implements Sampler {
                 }
             }
         }
+
+        if (spanKind == SpanKind.CONSUMER) { // MQ or Websocket
+            return highTrafficSampler.shouldSample(parentContext, traceId, name, spanKind, attributes, parentLinks);
+        }
+
         return defaultSampler.shouldSample(parentContext, traceId, name, spanKind, attributes, parentLinks);
     }
 

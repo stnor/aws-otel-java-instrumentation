@@ -1,7 +1,7 @@
 package se.nomp.instrumentation.otel.providers;
 
-import io.opentelemetry.sdk.autoconfigure.ConfigProperties;
-import io.opentelemetry.sdk.autoconfigure.spi.ConfigurableSamplerProvider;
+import io.opentelemetry.sdk.autoconfigure.spi.ConfigProperties;
+import io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider;
 import io.opentelemetry.sdk.trace.samplers.Sampler;
 
 public class NompSamplerProvider implements ConfigurableSamplerProvider {

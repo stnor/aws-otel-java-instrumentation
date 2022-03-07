@@ -24,10 +24,11 @@ base {
 
 dependencies {
   compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api")
-  compileOnly("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
+  compileOnly("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi")
   compileOnly("org.slf4j:slf4j-api")
 
   implementation("io.opentelemetry:opentelemetry-sdk-extension-aws")
+  implementation("io.opentelemetry.contrib:opentelemetry-aws-xray")
 
   testImplementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
 

@@ -33,6 +33,10 @@ release {
   defaultVersionStrategy = Strategies.getSNAPSHOT()
 }
 
+nebulaRelease {
+  addReleaseBranchPattern("""v\d+\.\d+\.x""")
+}
+
 nexusPublishing {
   repositories {
     sonatype {
@@ -84,10 +88,19 @@ allprojects {
       withSourcesJar()
     }
 
+    val dependencyManagement by configurations.creating {
+      isCanBeConsumed = false
+      isCanBeResolved = false
+      isVisible = false
+    }
+
     dependencies {
-      configurations.configureEach {
-        if (name.endsWith("Classpath")) {
-          add(name, enforcedPlatform(project(":dependencyManagement")))
+      dependencyManagement(platform(project(":dependencyManagement")))
+      afterEvaluate {
+        configurations.configureEach {
+          if (isCanBeResolved && !isCanBeConsumed) {
+            extendsFrom(dependencyManagement)
+          }
         }
       }
 
@@ -99,7 +112,7 @@ allprojects {
 
 //    spotless {
 //      java {
-//        googleJavaFormat("1.8")
+//        googleJavaFormat()
 //
 //        if (!project.path.startsWith(":sample-apps:")) {
 //          licenseHeaderFile("${rootProject.projectDir}/config/license/header.java")
@@ -144,8 +157,10 @@ allprojects {
 
   plugins.withId("com.github.johnrengelman.shadow") {
     tasks {
-      named<ShadowJar>("shadowJar") {
+      withType<ShadowJar>().configureEach {
         exclude("**/module-info.class")
+
+        mergeServiceFiles()
 
         // rewrite library instrumentation dependencies
         relocate("io.opentelemetry.instrumentation", "io.opentelemetry.javaagent.shaded.instrumentation")

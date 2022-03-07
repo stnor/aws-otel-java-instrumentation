@@ -13,6 +13,8 @@
  * permissions and limitations under the License.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
   java
   `maven-publish`
@@ -27,40 +29,57 @@ java {
 }
 
 base {
-  archivesBaseName = "aws-opentelemetry-agent"
+  archivesName.set("aws-opentelemetry-agent")
+}
+
+val javaagentLibs by configurations.creating {
+  isCanBeResolved = true
+  isCanBeConsumed = false
+
+  exclude("io.opentelemetry", "opentelemetry-api")
+  exclude("io.opentelemetry", "opentelemetry-sdk")
+  exclude("io.opentelemetry", "opentelemetry-sdk-common")
+  exclude("io.opentelemetry", "opentelemetry-semconv")
+}
+
+val shadowClasspath by configurations.creating {
+  isCanBeConsumed = false
+  isCanBeResolved = true
+  attributes {
+    attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling::class.java, Bundling.EXTERNAL))
+  }
 }
 
 dependencies {
-  implementation("io.opentelemetry.javaagent", "opentelemetry-javaagent", classifier = "all")
-}
+  // Ensure dependency doesn't leak into POMs by using compileOnly and shadow-specific configuration.
+  val agentDep = create("io.opentelemetry.javaagent", "opentelemetry-javaagent")
+  shadowClasspath(agentDep)
+  compileOnly(agentDep)
 
-val bundledProjects = listOf(
-  project(":awsagentprovider"),
-  project(":instrumentation:log4j-2.13.2"),
-  project(":instrumentation:logback-1.0")
-)
-
-for (bundled in bundledProjects) {
-  evaluationDependsOn(bundled.path)
+  javaagentLibs(project(":awsagentprovider"))
+  javaagentLibs(project(":instrumentation:log4j-2.13.2"))
+  javaagentLibs(project(":instrumentation:logback-1.0"))
 }
 
 project.version = "1.2.0-nomp"
 
 tasks {
-  processResources {
-    for (bundled in bundledProjects) {
-      val task = bundled.tasks.named<Jar>("shadowJar").get()
-      val providerArchive = task.archiveFile
-      from(zipTree(providerArchive)) {
-        into("inst")
-        rename("(^.*)\\.class$", "$1.classdata")
-      }
-      dependsOn(task)
-    }
+  val relocateJavaagentLibs by registering(ShadowJar::class) {
+    configurations = listOf(javaagentLibs)
+
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+
+    archiveFileName.set("javaagentLibs-relocated.jar")
   }
 
   shadowJar {
+    dependsOn(relocateJavaagentLibs)
+
     archiveClassifier.set("")
+
+    configurations = listOf(shadowClasspath)
+
+    isolateClasses(relocateJavaagentLibs.get().outputs.files)
 
     exclude("**/module-info.class")
 
@@ -108,7 +127,17 @@ jib {
     image = "public.ecr.aws/u0d6r4y4/aws-opentelemetry-java-base:alpha"
   }
   from {
-    image = "public.ecr.aws/u0d6r4y4/amazoncorretto-distroless:alpha"
+    image = "gcr.io/distroless/java17-debian11:debug"
+    platforms {
+      platform {
+        architecture = "amd64"
+        os = "linux"
+      }
+      platform {
+        architecture = "arm64"
+        os = "linux"
+      }
+    }
   }
   container {
     appRoot = "/aws-observability"
@@ -116,4 +145,19 @@ jib {
     environment = mapOf("JAVA_TOOL_OPTIONS" to "-javaagent:/aws-observability/classpath/aws-opentelemetry-agent-$version.jar")
   }
   containerizingMode = "packaged"
+}
+
+fun CopySpec.isolateClasses(jars: Iterable<File>) {
+  jars.forEach {
+    from(zipTree(it)) {
+      // important to keep prefix "inst" short, as it is prefixed to lots of strings in runtime mem
+      into("inst")
+      rename("(^.*)\\.class\$", "\$1.classdata")
+      // Rename LICENSE file since it clashes with license dir on non-case sensitive FSs (i.e. Mac)
+      rename("""^LICENSE$""", "LICENSE.renamed")
+      exclude("META-INF/INDEX.LIST")
+      exclude("META-INF/*.DSA")
+      exclude("META-INF/*.SF")
+    }
+  }
 }

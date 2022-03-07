@@ -26,35 +26,38 @@ data class DependencySet(val group: String, val version: String, val modules: Li
 
 val TEST_SNAPSHOTS = rootProject.findProperty("testUpstreamSnapshots") == "true"
 
+val otelVersion = "1.11.1"
+val otelSnapshotVersion = "1.12.0"
+
 val DEPENDENCY_BOMS = listOf(
-  "com.amazonaws:aws-java-sdk-bom:1.11.1020",
-  "com.fasterxml.jackson:jackson-bom:2.12.3",
-  "com.google.guava:guava-bom:30.1.1-jre",
-  "com.google.protobuf:protobuf-bom:3.17.0",
-  "com.linecorp.armeria:armeria-bom:1.7.2",
-  "io.grpc:grpc-bom:1.37.1",
-  "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:${if (!TEST_SNAPSHOTS) "1.2.0-alpha" else "1.3.0-alpha-SNAPSHOT"}",
-  "org.apache.logging.log4j:log4j-bom:2.14.1",
-  "org.junit:junit-bom:5.7.2",
-  "org.springframework.boot:spring-boot-dependencies:2.4.5",
-  "org.testcontainers:testcontainers-bom:1.15.3",
-  "software.amazon.awssdk:bom:2.16.64"
+  "com.amazonaws:aws-java-sdk-bom:1.12.170",
+  "com.fasterxml.jackson:jackson-bom:2.13.1",
+  "com.google.guava:guava-bom:31.1-jre",
+  "com.google.protobuf:protobuf-bom:3.19.4",
+  "com.linecorp.armeria:armeria-bom:1.14.1",
+  "io.grpc:grpc-bom:1.44.1",
+  "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:${if (!TEST_SNAPSHOTS) "$otelVersion-alpha" else "$otelSnapshotVersion-alpha-SNAPSHOT"}",
+  "org.apache.logging.log4j:log4j-bom:2.17.2",
+  "org.junit:junit-bom:5.8.2",
+  "org.springframework.boot:spring-boot-dependencies:2.6.4",
+  "org.testcontainers:testcontainers-bom:1.16.3",
+  "software.amazon.awssdk:bom:2.17.141"
 )
 
 val DEPENDENCY_SETS = listOf(
   DependencySet(
     "org.assertj",
-    "3.19.0",
+    "3.22.0",
     listOf("assertj-core")
   ),
   DependencySet(
     "org.curioswitch.curiostack",
-    "1.2.0",
+    "2.0.0",
     listOf("protobuf-jackson")
   ),
   DependencySet(
     "org.slf4j",
-    "1.7.30",
+    "1.7.36",
     listOf(
       "slf4j-api",
       "slf4j-simple"
@@ -65,9 +68,11 @@ val DEPENDENCY_SETS = listOf(
 val DEPENDENCIES = listOf(
   "commons-logging:commons-logging:1.2",
   "com.sparkjava:spark-core:2.9.3",
-  "com.squareup.okhttp3:okhttp:4.9.1",
-  "io.opentelemetry.javaagent:opentelemetry-javaagent:${if (!TEST_SNAPSHOTS) "1.2.0" else "1.3.0-SNAPSHOT"}",
-  "net.bytebuddy:byte-buddy:1.11.0"
+  "com.squareup.okhttp3:okhttp:4.9.3",
+  "io.opentelemetry.contrib:opentelemetry-aws-xray:1.11.0",
+  "io.opentelemetry.proto:opentelemetry-proto:0.11.0-alpha",
+  "io.opentelemetry.javaagent:opentelemetry-javaagent:${if (!TEST_SNAPSHOTS) otelVersion else "$otelSnapshotVersion-SNAPSHOT"}",
+  "net.bytebuddy:byte-buddy:1.12.8"
 )
 
 javaPlatform {

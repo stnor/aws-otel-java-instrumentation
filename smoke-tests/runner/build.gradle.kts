@@ -26,7 +26,7 @@ dependencies {
   testImplementation("com.google.guava:guava")
   testImplementation("com.linecorp.armeria:armeria")
   testImplementation("io.opentelemetry:opentelemetry-api")
-  testImplementation("io.opentelemetry:opentelemetry-proto")
+  testImplementation("io.opentelemetry.proto:opentelemetry-proto")
   testImplementation("org.curioswitch.curiostack:protobuf-jackson")
   testImplementation("org.slf4j:slf4j-simple")
   testImplementation("org.testcontainers:junit-jupiter")
@@ -36,7 +36,7 @@ project.evaluationDependsOn(":otelagent")
 
 val otelAgentJarTask = project(":otelagent").tasks.named<Jar>("shadowJar")
 tasks {
-  named<Test>("test") {
+  withType<Test>().configureEach {
     dependsOn(otelAgentJarTask)
 
     jvmArgs(

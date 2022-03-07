@@ -8,6 +8,13 @@ on:
       - gradle/**
       - .github/workflows/docker-build-smoke-tests-fake-backend.yml
 
+env:
+  AWS_DEFAULT_REGION: us-east-1
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-docker:
     runs-on: ubuntu-latest
@@ -15,21 +22,19 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 17
       - uses: gradle/wrapper-validation-action@v1
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE_ARN }}
-          role-duration-seconds: 1200
-          aws-region: us-east-1
-      - name: Login to ECR
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+      - name: Log in to AWS ECR
         uses: docker/login-action@v1
         with:
           registry: public.ecr.aws
+
       - name: Build and push docker image
-        uses: burrunan/gradle-cache-action@v1
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: :smoke-tests:fakebackend:jib

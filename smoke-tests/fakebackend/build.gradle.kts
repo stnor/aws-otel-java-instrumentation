@@ -26,7 +26,7 @@ java {
 
 dependencies {
   implementation("com.linecorp.armeria:armeria-grpc")
-  implementation("io.opentelemetry:opentelemetry-proto")
+  implementation("io.opentelemetry.proto:opentelemetry-proto")
   implementation("org.curioswitch.curiostack:protobuf-jackson")
   implementation("org.slf4j:slf4j-simple")
 }
@@ -36,6 +36,6 @@ jib {
     image = "public.ecr.aws/u0d6r4y4/aws-otel-java-test-fakebackend:alpha"
   }
   from {
-    image = "public.ecr.aws/u0d6r4y4/amazoncorretto-distroless:alpha"
+    image = "gcr.io/distroless/java17-debian11:debug"
   }
 }

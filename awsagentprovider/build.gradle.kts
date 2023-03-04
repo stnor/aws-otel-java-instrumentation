@@ -27,11 +27,15 @@ dependencies {
   compileOnly("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi")
   compileOnly("org.slf4j:slf4j-api")
 
-  implementation("io.opentelemetry:opentelemetry-sdk-extension-aws")
+  // Trace ID Generation and Sampling Rules
   implementation("io.opentelemetry.contrib:opentelemetry-aws-xray")
+  // AWS Resource Detectors
+  implementation("io.opentelemetry.contrib:opentelemetry-aws-resources")
 
   testImplementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
-
+  testImplementation("io.opentelemetry:opentelemetry-sdk-testing")
+  testImplementation("io.opentelemetry:opentelemetry-extension-aws")
+  testImplementation("io.opentelemetry:opentelemetry-extension-trace-propagators")
   testImplementation("com.google.guava:guava")
 
   compileOnly("com.google.code.findbugs:jsr305:3.0.2")

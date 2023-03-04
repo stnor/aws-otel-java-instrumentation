@@ -24,8 +24,7 @@ dependencies {
   compileOnly("io.opentelemetry:opentelemetry-api")
   compileOnly("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0")
   compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api")
-  compileOnly("io.opentelemetry.javaagent:opentelemetry-javaagent-instrumentation-api")
   compileOnly("net.bytebuddy:byte-buddy")
 
-  compileOnly("ch.qos.logback:logback-classic:1.0.0")
+  compileOnly("ch.qos.logback:logback-classic:1.4.5")
 }

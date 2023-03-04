@@ -1,4 +1,4 @@
-# AWS OpenTelemetry Instrumentation for Java
+# AWS Distro for OpenTelemetry - Instrumentation for Java
 
 ## Introduction
 
@@ -35,3 +35,10 @@ defaulting to maximum interoperability.
 
 Other than that, the distribution is identical to the upstream agent and all configuration can be
 used as is.
+
+## Support
+
+Please note that as per policy, we're providing support via GitHub on a best effort basis. However, if you have AWS Enterprise Support you can create a ticket and we will provide direct support within the respective SLAs.
+
+## Security issue notifications
+If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.

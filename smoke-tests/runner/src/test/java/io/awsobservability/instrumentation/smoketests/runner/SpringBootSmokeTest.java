@@ -98,7 +98,7 @@ class SpringBootSmokeTest {
 
   @Container
   private static final GenericContainer<?> backend =
-      new GenericContainer<>("public.ecr.aws/u0d6r4y4/aws-otel-java-test-fakebackend:alpha")
+      new GenericContainer<>("public.ecr.aws/aws-otel-test/aws-otel-java-test-fakebackend:alpha")
           .withExposedPorts(8080)
           .waitingFor(Wait.forHttp("/health").forPort(8080))
           .withLogConsumer(new Slf4jLogConsumer(backendLogger))
@@ -107,7 +107,8 @@ class SpringBootSmokeTest {
 
   @Container
   private static final GenericContainer<?> application =
-      new GenericContainer<>("public.ecr.aws/u0d6r4y4/aws-otel-java-smoketests-springboot:latest")
+      new GenericContainer<>(
+              "public.ecr.aws/aws-otel-test/aws-otel-java-smoketests-springboot:latest")
           .dependsOn(backend)
           .withExposedPorts(8080)
           .withNetwork(network)
@@ -122,7 +123,8 @@ class SpringBootSmokeTest {
 
   @Container
   private static final GenericContainer<?> applicationXraySampler =
-      new GenericContainer<>("public.ecr.aws/u0d6r4y4/aws-otel-java-smoketests-springboot:latest")
+      new GenericContainer<>(
+              "public.ecr.aws/aws-otel-test/aws-otel-java-smoketests-springboot:latest")
           .dependsOn(backend)
           .withExposedPorts(8080)
           .withNetwork(network)
@@ -172,17 +174,17 @@ class SpringBootSmokeTest {
         .anySatisfy(
             span -> {
               assertThat(span.getKind()).isEqualTo(SPAN_KIND_SERVER);
-              assertThat(span.getName()).isEqualTo("/hello");
+              assertThat(span.getName()).isEqualTo("GET /hello");
             })
         .anySatisfy(
             span -> {
               assertThat(span.getKind()).isEqualTo(SPAN_KIND_SERVER);
-              assertThat(span.getName()).isEqualTo("/backend");
+              assertThat(span.getName()).isEqualTo("GET /backend");
             })
         .anySatisfy(
             span -> {
               assertThat(span.getKind()).isEqualTo(SPAN_KIND_CLIENT);
-              assertThat(span.getName()).isEqualTo("HTTP GET");
+              assertThat(span.getName()).isEqualTo("GET");
             })
         .anySatisfy(
             span -> {
@@ -258,7 +260,7 @@ class SpringBootSmokeTest {
     }
     return exported.stream()
         .flatMap(req -> req.getResourceSpansList().stream())
-        .flatMap(rs -> rs.getInstrumentationLibrarySpansList().stream())
+        .flatMap(rs -> rs.getScopeSpansList().stream())
         .flatMap(ils -> ils.getSpansList().stream())
         .collect(toImmutableList());
   }

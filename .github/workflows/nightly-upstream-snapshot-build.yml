@@ -1,3 +1,4 @@
+name: Nightly Snapshot Build
 on:
   schedule:
     - cron: "21 3 * * *"
@@ -45,3 +46,17 @@ jobs:
         with:
           name: aws-opentelemetry-agent.jar
           path: otelagent/build/libs/aws-opentelemetry-agent-*.jar
+  publish-build-status:
+    needs: [build]
+    if: ${{ always() }}
+    uses: ./.github/workflows/publish-status.yml
+    with:
+      namespace: 'ADOT/GitHubActions'
+      repository: ${{ github.repository }}
+      branch: ${{ github.ref_name }}
+      workflow: nightly-upstream-snapshot-build
+      success: ${{ needs.build.result == 'success' }}
+      region: us-west-2
+    secrets:
+      roleArn: ${{ secrets.METRICS_ROLE_ARN }}
+
